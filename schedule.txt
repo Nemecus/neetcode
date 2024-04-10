@@ -1,0 +1,6 @@
+Meeting: 4/12/2024
+https://neetcode.io/problems/dynamicArray
+https://neetcode.io/problems/singlyLinkedList
+https://neetcode.io/problems/insertionSort
+https://neetcode.io/problems/factory
+https://neetcode.io/problems/singleton
