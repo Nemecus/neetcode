@@ -3,26 +3,38 @@ package main
 import (
 	"fmt"
 
+	"github.com/Nemecus/neetcode/clear"
 	"github.com/Nemecus/neetcode/dynamicarray"
 	"github.com/Nemecus/neetcode/insertionsort"
 	"github.com/Nemecus/neetcode/singlylinkedlist"
+	"github.com/charmbracelet/lipgloss"
 )
 
+var header = lipgloss.NewStyle().
+	Foreground(lipgloss.Color("#04B575"))
+
+var title = lipgloss.NewStyle().
+	Foreground(lipgloss.Color("#0000FF"))
+
 func main() {
-	//runDynamicArray()
-	//runSinglyLinkedList()
+	clear.CallClear()
+	fmt.Println(title.Render("Starting Dynamic Array!"))
+	runDynamicArray()
+	fmt.Println(title.Render("Starting Singly Linked List!"))
+	runSinglyLinkedList()
+	fmt.Println(title.Render("Starting Insertion Sort!"))
 	runInsertionSort()
 }
 
 func runDynamicArray() {
 	// Test 1
-	fmt.Println("Test 1")
+	fmt.Println(header.Render("Test 1"))
 	example1 := dynamicarray.SetupArray(1)
 	fmt.Println("Current Size: ", example1.GetSize())
 	fmt.Println("Current Capacity: ", example1.GetCapacity())
 
 	// Test 2
-	fmt.Println("Test 2")
+	fmt.Println(header.Render("Test 2"))
 	example2 := dynamicarray.SetupArray(1)
 	fmt.Println("Running Pushback")
 	example2.Pushback(1)
@@ -32,7 +44,7 @@ func runDynamicArray() {
 	fmt.Println("Current Capacity: ", example2.GetCapacity())
 
 	// Test 3
-	fmt.Println("Test 3")
+	fmt.Println(header.Render("Test 3"))
 	example3 := dynamicarray.SetupArray(1)
 	fmt.Println("Current Size: ", example3.GetSize())
 	fmt.Println("Current Capacity: ", example3.GetCapacity())
@@ -54,7 +66,7 @@ func runDynamicArray() {
 }
 
 func runSinglyLinkedList() {
-	fmt.Println("Test 1")
+	fmt.Println(header.Render("Test 1"))
 	var example1 singlylinkedlist.LinkedList
 	fmt.Println("Inserting Head value 1")
 	example1.InsertHead(1)
@@ -66,7 +78,7 @@ func runSinglyLinkedList() {
 	example1.Remove(1)
 	fmt.Println("Full Values List: ", example1.GetValues())
 
-	fmt.Println("Test 2")
+	fmt.Println(header.Render("Test 2"))
 	var example2 singlylinkedlist.LinkedList
 	fmt.Println("Inserting Head value 1")
 	example2.InsertHead(1)
@@ -78,7 +90,7 @@ func runSinglyLinkedList() {
 func runInsertionSort() {
 	pairs := map[int]string{5: "apple", 2: "banana", 9: "cherry"}
 
-	fmt.Println("Test 1")
+	fmt.Println(header.Render("Test 1"))
 	keys := make([]int, 0, len(pairs))
 
 	for k := range pairs {
