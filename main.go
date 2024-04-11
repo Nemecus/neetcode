@@ -5,7 +5,9 @@ import (
 
 	"github.com/Nemecus/neetcode/clear"
 	"github.com/Nemecus/neetcode/dynamicarray"
+	"github.com/Nemecus/neetcode/factorymethod"
 	"github.com/Nemecus/neetcode/insertionsort"
+	"github.com/Nemecus/neetcode/singleton"
 	"github.com/Nemecus/neetcode/singlylinkedlist"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -24,6 +26,10 @@ func main() {
 	runSinglyLinkedList()
 	fmt.Println(title.Render("Starting Insertion Sort!"))
 	runInsertionSort()
+	fmt.Println(title.Render("Starting Factory Method!"))
+	runFactoryMethod()
+	fmt.Println(title.Render("Starting Singleton Pattern!"))
+	runSingletonPattern()
 }
 
 func runDynamicArray() {
@@ -137,4 +143,36 @@ func runInsertionSort() {
 				fmt.Println(nk, sortedPairs2[nk])
 			}
 	*/
+}
+
+func runFactoryMethod() {
+	fmt.Println(header.Render("Testing Vehicles"))
+	carFactory := &factorymethod.CarFactory{}
+	car := carFactory.CreateVehicle()
+	fmt.Println("Vehicle is a ", car.GetType())
+
+	truckFactory := &factorymethod.TruckFactory{}
+	truck := truckFactory.CreateVehicle()
+	fmt.Println("Vehicle is a ", truck.GetType())
+
+	bikeFactory := &factorymethod.BikeFactory{}
+	bike := bikeFactory.CreateVehicle()
+	fmt.Println("Vehicle is a ", bike.GetType())
+}
+
+func runSingletonPattern() {
+	fmt.Println(header.Render("Test Singleton"))
+	fmt.Println("Creating Singleton Instance")
+
+	var singleton singleton.ValueServiceSingleton
+
+	s1 := singleton.GetService()
+	fmt.Println("Getting Value: ", s1.GetValue())
+	fmt.Println("Setting Value to 'a value string'")
+	s1.SetValue("a value string")
+	fmt.Println("Getting Value: ", s1.GetValue())
+
+	fmt.Println("Creating Second Singleton Instance")
+	s2 := singleton.GetService()
+	fmt.Println("Getting Value from second instance: ", s2.GetValue())
 }
