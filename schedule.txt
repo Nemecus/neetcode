@@ -1,6 +1,13 @@
-Meeting: 4/12/2024
+Neetcode - Week 1
 https://neetcode.io/problems/dynamicArray
 https://neetcode.io/problems/singlyLinkedList
 https://neetcode.io/problems/insertionSort
 https://neetcode.io/problems/factory
 https://neetcode.io/problems/singleton
+
+Neetcode - Week 2
+https://neetcode.io/problems/queue
+https://neetcode.io/problems/builder
+https://neetcode.io/problems/prototype
+https://neetcode.io/problems/adapter
+https://neetcode.io/problems/decorator
