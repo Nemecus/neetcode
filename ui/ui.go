@@ -3,6 +3,7 @@ package ui
 import (
 	"strings"
 
+	"github.com/Nemecus/neetcode/ui/components/builder"
 	"github.com/Nemecus/neetcode/ui/components/dynamicarray"
 	"github.com/Nemecus/neetcode/ui/components/factorymethod"
 	"github.com/Nemecus/neetcode/ui/components/insertionsort"
@@ -26,6 +27,7 @@ type mainContentModel struct {
 	factoryMethod    factorymethod.Model
 	singleton        singleton.Model
 	queue            queue.Model
+	builder          builder.Model
 }
 
 type Model struct {
@@ -62,6 +64,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		singletonCmd        tea.Cmd
 		queueCmd            tea.Cmd
 		menuCmd             tea.Cmd
+		builderCmd          tea.Cmd
 		cmds                []tea.Cmd
 	)
 
@@ -94,6 +97,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "Queue":
 			m.ctx.State = context.QueueView
 			m.queue = queue.NewModel(m.ctx)
+		case "Builder":
+			m.ctx.State = context.BuilderView
+			m.builder = builder.NewModel(m.ctx)
 		}
 	case dynamicarray.AnswerMsg:
 		switch msg {
@@ -125,6 +131,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "Return":
 			m.ctx.State = context.MenuView
 		}
+	case builder.AnswerMsg:
+		switch msg {
+		case "Return":
+			m.ctx.State = context.MenuView
+		}
 	}
 
 	m.syncProgramContext()
@@ -144,6 +155,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.singleton, singletonCmd = m.singleton.Update(msg)
 	case context.QueueView:
 		m.queue, queueCmd = m.queue.Update(msg)
+	case context.BuilderView:
+		m.builder, builderCmd = m.builder.Update(msg)
 	}
 	cmds = append(
 		cmds,
@@ -155,6 +168,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		factoryMethodCmd,
 		singletonCmd,
 		queueCmd,
+		builderCmd,
 	)
 	return m, tea.Batch(cmds...)
 }
@@ -179,6 +193,8 @@ func (m Model) View() string {
 		s.WriteString(m.singleton.View())
 	case context.QueueView:
 		s.WriteString(m.queue.View())
+	case context.BuilderView:
+		s.WriteString(m.builder.View())
 	}
 
 	s.WriteString("\n")
