@@ -7,6 +7,7 @@ import (
 	"github.com/Nemecus/neetcode/ui/components/factorymethod"
 	"github.com/Nemecus/neetcode/ui/components/insertionsort"
 	"github.com/Nemecus/neetcode/ui/components/menu"
+	"github.com/Nemecus/neetcode/ui/components/queue"
 	"github.com/Nemecus/neetcode/ui/components/singleton"
 	"github.com/Nemecus/neetcode/ui/components/singlylinkedlist"
 	"github.com/Nemecus/neetcode/ui/context"
@@ -24,6 +25,7 @@ type mainContentModel struct {
 	insertionSort    insertionsort.Model
 	factoryMethod    factorymethod.Model
 	singleton        singleton.Model
+	queue            queue.Model
 }
 
 type Model struct {
@@ -58,6 +60,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		insertionSortCmd    tea.Cmd
 		factoryMethodCmd    tea.Cmd
 		singletonCmd        tea.Cmd
+		queueCmd            tea.Cmd
 		menuCmd             tea.Cmd
 		cmds                []tea.Cmd
 	)
@@ -88,6 +91,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "Singleton":
 			m.ctx.State = context.SingletonView
 			m.singleton = singleton.NewModel(m.ctx)
+		case "Queue":
+			m.ctx.State = context.QueueView
+			m.queue = queue.NewModel(m.ctx)
 		}
 	case dynamicarray.AnswerMsg:
 		switch msg {
@@ -114,6 +120,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "Return":
 			m.ctx.State = context.MenuView
 		}
+	case queue.AnswerMsg:
+		switch msg {
+		case "Return":
+			m.ctx.State = context.MenuView
+		}
 	}
 
 	m.syncProgramContext()
@@ -131,8 +142,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.factoryMethod, factoryMethodCmd = m.factoryMethod.Update(msg)
 	case context.SingletonView:
 		m.singleton, singletonCmd = m.singleton.Update(msg)
+	case context.QueueView:
+		m.queue, queueCmd = m.queue.Update(msg)
 	}
-	cmds = append(cmds, cmd, menuCmd, dynamicArrayCmd, singlyLinkedListCmd, insertionSortCmd, factoryMethodCmd, singletonCmd)
+	cmds = append(
+		cmds,
+		cmd,
+		menuCmd,
+		dynamicArrayCmd,
+		singlyLinkedListCmd,
+		insertionSortCmd,
+		factoryMethodCmd,
+		singletonCmd,
+		queueCmd,
+	)
 	return m, tea.Batch(cmds...)
 }
 
@@ -154,6 +177,8 @@ func (m Model) View() string {
 		s.WriteString(m.factoryMethod.View())
 	case context.SingletonView:
 		s.WriteString(m.singleton.View())
+	case context.QueueView:
+		s.WriteString(m.queue.View())
 	}
 
 	s.WriteString("\n")
