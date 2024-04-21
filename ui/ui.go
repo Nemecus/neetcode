@@ -4,10 +4,12 @@ import (
 	"strings"
 
 	"github.com/Nemecus/neetcode/ui/components/builder"
+	"github.com/Nemecus/neetcode/ui/components/decorator"
 	"github.com/Nemecus/neetcode/ui/components/dynamicarray"
 	"github.com/Nemecus/neetcode/ui/components/factorymethod"
 	"github.com/Nemecus/neetcode/ui/components/insertionsort"
 	"github.com/Nemecus/neetcode/ui/components/menu"
+	"github.com/Nemecus/neetcode/ui/components/prototype"
 	"github.com/Nemecus/neetcode/ui/components/queue"
 	"github.com/Nemecus/neetcode/ui/components/singleton"
 	"github.com/Nemecus/neetcode/ui/components/singlylinkedlist"
@@ -28,6 +30,8 @@ type mainContentModel struct {
 	singleton        singleton.Model
 	queue            queue.Model
 	builder          builder.Model
+	prototype        prototype.Model
+	decorator        decorator.Model
 }
 
 type Model struct {
@@ -65,6 +69,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		queueCmd            tea.Cmd
 		menuCmd             tea.Cmd
 		builderCmd          tea.Cmd
+		prototypeCmd        tea.Cmd
+		decoratorCmd        tea.Cmd
 		cmds                []tea.Cmd
 	)
 
@@ -100,6 +106,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "Builder":
 			m.ctx.State = context.BuilderView
 			m.builder = builder.NewModel(m.ctx)
+		case "Prototype":
+			m.ctx.State = context.PrototypeView
+			m.prototype = prototype.NewModel(m.ctx)
+		case "Decorator":
+			m.ctx.State = context.DecoratorView
+			m.decorator = decorator.NewModel(m.ctx)
 		}
 	case dynamicarray.AnswerMsg:
 		switch msg {
@@ -136,6 +148,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "Return":
 			m.ctx.State = context.MenuView
 		}
+	case prototype.AnswerMsg:
+		switch msg {
+		case "Return":
+			m.ctx.State = context.MenuView
+		}
+	case decorator.AnswerMsg:
+		switch msg {
+		case "Return":
+			m.ctx.State = context.MenuView
+		}
 	}
 
 	m.syncProgramContext()
@@ -157,6 +179,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.queue, queueCmd = m.queue.Update(msg)
 	case context.BuilderView:
 		m.builder, builderCmd = m.builder.Update(msg)
+	case context.PrototypeView:
+		m.prototype, prototypeCmd = m.prototype.Update(msg)
+	case context.DecoratorView:
+		m.decorator, decoratorCmd = m.decorator.Update(msg)
 	}
 	cmds = append(
 		cmds,
@@ -169,6 +195,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		singletonCmd,
 		queueCmd,
 		builderCmd,
+		prototypeCmd,
+		decoratorCmd,
 	)
 	return m, tea.Batch(cmds...)
 }
@@ -195,6 +223,10 @@ func (m Model) View() string {
 		s.WriteString(m.queue.View())
 	case context.BuilderView:
 		s.WriteString(m.builder.View())
+	case context.PrototypeView:
+		s.WriteString(m.prototype.View())
+	case context.DecoratorView:
+		s.WriteString(m.decorator.View())
 	}
 
 	s.WriteString("\n")
