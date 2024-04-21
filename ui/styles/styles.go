@@ -15,10 +15,11 @@ type Styles struct {
 
 type CommonStyles struct {
 	MainStyle              lipgloss.Style
+	MainTitleStyle         lipgloss.Style
+	HeaderStyle            lipgloss.Style
+	TitleStyle             lipgloss.Style
 	SelectTitleStyle       lipgloss.Style
-	SelectDescStyle        lipgloss.Style
 	NormalTitleStyle       lipgloss.Style
-	NormalDescStyle        lipgloss.Style
 	HelpBorderStyle        lipgloss.Style
 	HelpPrimaryTextStyle   lipgloss.Style
 	HelpSeparatorTextStyle lipgloss.Style
@@ -51,29 +52,28 @@ func BuildStyles(theme theme.Theme) CommonStyles {
 	var s CommonStyles
 
 	s.MainStyle = lipgloss.NewStyle().
+		Foreground(theme.PrimaryText)
+
+	s.MainTitleStyle = lipgloss.NewStyle().
+		Background(theme.TitleText).
+		Foreground(theme.PrimaryText)
+
+	s.HeaderStyle = lipgloss.NewStyle().
+		Foreground(theme.TitleText)
+
+	s.TitleStyle = lipgloss.NewStyle().
 		Foreground(theme.PrimaryText).
-		Padding(0, 0, 0, 4)
+		PaddingLeft(2)
 
 	s.SelectTitleStyle = lipgloss.NewStyle().
-		BorderStyle(customBorder).
-		BorderForeground(theme.SelectTitleText).
-		BorderLeft(true).
 		Foreground(theme.SelectTitleText).
 		Bold(true).
 		MarginLeft(2).
 		Padding(0, 0, 0, 1)
 
-	s.SelectDescStyle = lipgloss.NewStyle().
-		Foreground(theme.SelectDescText).
-		Padding(0, 0, 0, 5)
-
 	s.NormalTitleStyle = lipgloss.NewStyle().
 		Foreground(theme.PrimaryText).
 		Padding(0, 0, 0, 4)
-
-	s.NormalDescStyle = s.NormalTitleStyle.Copy().
-		Foreground(theme.SecondaryText).
-		Padding(0, 0, 0, 5)
 
 	s.HelpBorderStyle = lipgloss.NewStyle().
 		Border(lipgloss.NormalBorder(), false, false, false, true).

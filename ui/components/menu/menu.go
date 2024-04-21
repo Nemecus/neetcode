@@ -1,12 +1,49 @@
 package menu
 
 import (
+	"fmt"
+	"io"
+	"strings"
+
 	"github.com/Nemecus/neetcode/ui/context"
 	"github.com/Nemecus/neetcode/ui/keys"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
+
+const listHeight = 20
+
+var itemStyle lipgloss.Style
+var selectedItemStyle lipgloss.Style
+
+type item string
+
+func (i item) FilterValue() string { return "" }
+
+type itemDelegate struct{}
+
+func (d itemDelegate) Height() int                             { return 1 }
+func (d itemDelegate) Spacing() int                            { return 0 }
+func (d itemDelegate) Update(_ tea.Msg, _ *list.Model) tea.Cmd { return nil }
+func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list.Item) {
+	i, ok := listItem.(item)
+	if !ok {
+		return
+	}
+
+	str := fmt.Sprintf("%d. %s", index+1, i)
+
+	fn := itemStyle.Render
+	if index == m.Index() {
+		fn = func(s ...string) string {
+			return selectedItemStyle.Render("> " + strings.Join(s, " "))
+		}
+	}
+
+	fmt.Fprint(w, fn(str))
+}
 
 type Model struct {
 	ctx      *context.ProgramContext
@@ -15,47 +52,33 @@ type Model struct {
 	Choice   string
 }
 
-type item struct {
-	title, desc string
-}
-
 type AnswerMsg string
-
-func menuDelegate(ctx *context.ProgramContext) list.DefaultDelegate {
-	newDelegate := list.NewDefaultDelegate()
-
-	newDelegate.Styles.SelectedTitle = ctx.Styles.Common.SelectTitleStyle.Copy()
-	newDelegate.Styles.SelectedDesc = ctx.Styles.Common.SelectDescStyle.Copy()
-	newDelegate.Styles.NormalTitle = ctx.Styles.Common.NormalTitleStyle.Copy()
-	newDelegate.Styles.NormalDesc = ctx.Styles.Common.NormalDescStyle.Copy()
-	return newDelegate
-}
-
-func (i item) Title() string       { return i.title }
-func (i item) Description() string { return i.desc }
-func (i item) FilterValue() string { return i.title }
 
 func NewModel(ctx context.ProgramContext) Model {
 	items := []list.Item{
-		item{title: "Dynamic Array", desc: "Data Structure"},
-		item{title: "Singled Linked List", desc: "Data Structure"},
-		item{title: "Insertion Sort", desc: "Sorting"},
-		item{title: "Factory", desc: "Design Pattern"},
-		item{title: "Singleton", desc: "Design Pattern"},
-		item{title: "Queue", desc: "Data Structure"},
-		item{title: "Builder", desc: "Design Pattern"},
-		item{title: "Prototype", desc: "Design Pattern"},
-		item{title: "Adapter", desc: "Design Pattern"},
-		item{title: "Decorator", desc: "Design Pattern"},
+		item("Dynamic Array"),
+		item("Singled Linked List"),
+		item("Insertion Sort"),
+		item("Factory"),
+		item("Singleton"),
+		item("Queue"),
+		item("Builder"),
+		item("Prototype"),
+		item("Adapter"),
+		item("Decorator"),
 	}
 
-	newMenuDelegate := menuDelegate(&ctx)
+	const defaultWidth = 20
+	itemStyle = ctx.Styles.Common.NormalTitleStyle
+	selectedItemStyle = ctx.Styles.Common.SelectTitleStyle
 
-	newMenu := list.New(items, newMenuDelegate, 0, 0)
+	newMenu := list.New(items, itemDelegate{}, defaultWidth, listHeight)
 	newMenu.Title = "Choose Option:"
-	newMenu.SetShowHelp(false)
 	newMenu.SetShowStatusBar(false)
-	newMenu.SetSize(66, 25)
+	newMenu.SetFilteringEnabled(false)
+	newMenu.Styles.Title = ctx.Styles.Common.MainStyle
+	newMenu.Styles.PaginationStyle = ctx.Styles.Common.SelectTitleStyle
+	newMenu.Styles.HelpStyle = ctx.Styles.Common.HelpPrimaryTextStyle
 
 	return Model{
 		ctx:      &ctx,
@@ -73,7 +96,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case key.Matches(msg, m.keys.Enter):
 			i, ok := m.MenuList.SelectedItem().(item)
 			if ok {
-				m.Choice = i.title
+				m.Choice = string(i)
 				return m, func() tea.Msg { return AnswerMsg(m.Choice) }
 			}
 		}

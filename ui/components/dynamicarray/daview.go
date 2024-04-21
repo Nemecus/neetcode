@@ -58,9 +58,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 func (m Model) View() string {
 	var s string
 	if m.done {
-		s = m.status + "Press Enter"
-	} else {
-		s = "Starting Dynamic Array!"
+		s = m.status + "\nPress Enter"
 	}
 
 	return m.ctx.Styles.Common.MainStyle.Copy().Render(s)
@@ -74,23 +72,26 @@ func (m Model) runDynamicArray() string {
 	var daString strings.Builder
 
 	// Test 1
-	daString.WriteString("Test 1\n")
+	daString.WriteString(m.ctx.Styles.Common.HeaderStyle.Render("Test 1"))
+	daString.WriteString("\n\n")
 	example1 := SetupArray(1)
 	daString.WriteString(fmt.Sprintf("Current Size: %d\n", example1.GetSize()))
-	daString.WriteString(fmt.Sprintf("Current Capacity: %d\n", example1.GetCapacity()))
+	daString.WriteString(fmt.Sprintf("Current Capacity: %d\n\n", example1.GetCapacity()))
 
 	// Test 2
-	daString.WriteString("Test 2\n")
+	daString.WriteString(m.ctx.Styles.Common.HeaderStyle.Render("Test 2"))
+	daString.WriteString("\n\n")
 	example2 := SetupArray(1)
 	daString.WriteString("Running Pushback\n")
 	example2.Pushback(1)
 	daString.WriteString(fmt.Sprintf("Current Capacity: %d\n", example2.GetCapacity()))
 	daString.WriteString("Running Pushback\n")
 	example2.Pushback(2)
-	daString.WriteString(fmt.Sprintf("Current Capacity: %d\n", example2.GetCapacity()))
+	daString.WriteString(fmt.Sprintf("Current Capacity: %d\n\n", example2.GetCapacity()))
 
 	// Test 3
-	daString.WriteString("Test 3\n")
+	daString.WriteString(m.ctx.Styles.Common.HeaderStyle.Render("Test 3"))
+	daString.WriteString("\n\n")
 	example3 := SetupArray(1)
 	daString.WriteString(fmt.Sprintf("Current Size: %d\n", example3.GetSize()))
 	daString.WriteString(fmt.Sprintf("Current Capacity: %d\n", example3.GetCapacity()))

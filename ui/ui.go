@@ -4,7 +4,11 @@ import (
 	"strings"
 
 	"github.com/Nemecus/neetcode/ui/components/dynamicarray"
+	"github.com/Nemecus/neetcode/ui/components/factorymethod"
+	"github.com/Nemecus/neetcode/ui/components/insertionsort"
 	"github.com/Nemecus/neetcode/ui/components/menu"
+	"github.com/Nemecus/neetcode/ui/components/singleton"
+	"github.com/Nemecus/neetcode/ui/components/singlylinkedlist"
 	"github.com/Nemecus/neetcode/ui/context"
 	"github.com/Nemecus/neetcode/ui/keys"
 	"github.com/Nemecus/neetcode/ui/styles"
@@ -14,8 +18,12 @@ import (
 )
 
 type mainContentModel struct {
-	menu         menu.Model
-	dynamicArray dynamicarray.Model
+	menu             menu.Model
+	dynamicArray     dynamicarray.Model
+	singlyLinkedList singlylinkedlist.Model
+	insertionSort    insertionsort.Model
+	factoryMethod    factorymethod.Model
+	singleton        singleton.Model
 }
 
 type Model struct {
@@ -44,10 +52,14 @@ func (m Model) Init() tea.Cmd {
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
-		cmd             tea.Cmd
-		dynamicArrayCmd tea.Cmd
-		menuCmd         tea.Cmd
-		cmds            []tea.Cmd
+		cmd                 tea.Cmd
+		dynamicArrayCmd     tea.Cmd
+		singlyLinkedListCmd tea.Cmd
+		insertionSortCmd    tea.Cmd
+		factoryMethodCmd    tea.Cmd
+		singletonCmd        tea.Cmd
+		menuCmd             tea.Cmd
+		cmds                []tea.Cmd
 	)
 
 	switch msg := msg.(type) {
@@ -64,8 +76,40 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "Dynamic Array":
 			m.ctx.State = context.DynamicArrayView
 			m.dynamicArray = dynamicarray.NewModel(m.ctx)
+		case "Singled Linked List":
+			m.ctx.State = context.SinglyLinkedListView
+			m.singlyLinkedList = singlylinkedlist.NewModel(m.ctx)
+		case "Insertion Sort":
+			m.ctx.State = context.InsertionSortView
+			m.insertionSort = insertionsort.NewModel(m.ctx)
+		case "Factory":
+			m.ctx.State = context.FactoryView
+			m.factoryMethod = factorymethod.NewModel(m.ctx)
+		case "Singleton":
+			m.ctx.State = context.SingletonView
+			m.singleton = singleton.NewModel(m.ctx)
 		}
 	case dynamicarray.AnswerMsg:
+		switch msg {
+		case "Return":
+			m.ctx.State = context.MenuView
+		}
+	case singlylinkedlist.AnswerMsg:
+		switch msg {
+		case "Return":
+			m.ctx.State = context.MenuView
+		}
+	case insertionsort.AnswerMsg:
+		switch msg {
+		case "Return":
+			m.ctx.State = context.MenuView
+		}
+	case factorymethod.AnswerMsg:
+		switch msg {
+		case "Return":
+			m.ctx.State = context.MenuView
+		}
+	case singleton.AnswerMsg:
 		switch msg {
 		case "Return":
 			m.ctx.State = context.MenuView
@@ -79,15 +123,39 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.menu, menuCmd = m.menu.Update(msg)
 	case context.DynamicArrayView:
 		m.dynamicArray, dynamicArrayCmd = m.dynamicArray.Update(msg)
+	case context.SinglyLinkedListView:
+		m.singlyLinkedList, singlyLinkedListCmd = m.singlyLinkedList.Update(msg)
+	case context.InsertionSortView:
+		m.insertionSort, insertionSortCmd = m.insertionSort.Update(msg)
+	case context.FactoryView:
+		m.factoryMethod, factoryMethodCmd = m.factoryMethod.Update(msg)
+	case context.SingletonView:
+		m.singleton, singletonCmd = m.singleton.Update(msg)
 	}
-	cmds = append(cmds, cmd, menuCmd, dynamicArrayCmd)
+	cmds = append(cmds, cmd, menuCmd, dynamicArrayCmd, singlyLinkedListCmd, insertionSortCmd, factoryMethodCmd, singletonCmd)
 	return m, tea.Batch(cmds...)
 }
 
 func (m Model) View() string {
 	s := strings.Builder{}
-	s.WriteString("Welcome to NeetCode Problems!\n")
-	s.WriteString(m.menu.View())
+	s.WriteString(m.ctx.Styles.Common.MainTitleStyle.Render("Welcome to NeetCode Problems!"))
+	s.WriteString("\n\n")
+
+	switch m.ctx.State {
+	case context.MenuView:
+		s.WriteString(m.menu.View())
+	case context.DynamicArrayView:
+		s.WriteString(m.dynamicArray.View())
+	case context.SinglyLinkedListView:
+		s.WriteString(m.singlyLinkedList.View())
+	case context.InsertionSortView:
+		s.WriteString(m.insertionSort.View())
+	case context.FactoryView:
+		s.WriteString(m.factoryMethod.View())
+	case context.SingletonView:
+		s.WriteString(m.singleton.View())
+	}
+
 	s.WriteString("\n")
 	return m.ctx.Styles.Common.MainStyle.Render(s.String())
 }
