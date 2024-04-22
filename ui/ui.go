@@ -3,6 +3,7 @@ package ui
 import (
 	"strings"
 
+	"github.com/Nemecus/neetcode/ui/components/adapter"
 	"github.com/Nemecus/neetcode/ui/components/builder"
 	"github.com/Nemecus/neetcode/ui/components/decorator"
 	"github.com/Nemecus/neetcode/ui/components/dynamicarray"
@@ -31,6 +32,7 @@ type mainContentModel struct {
 	queue            queue.Model
 	builder          builder.Model
 	prototype        prototype.Model
+	adapter          adapter.Model
 	decorator        decorator.Model
 }
 
@@ -70,6 +72,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		menuCmd             tea.Cmd
 		builderCmd          tea.Cmd
 		prototypeCmd        tea.Cmd
+		adapterCmd          tea.Cmd
 		decoratorCmd        tea.Cmd
 		cmds                []tea.Cmd
 	)
@@ -109,6 +112,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "Prototype":
 			m.ctx.State = context.PrototypeView
 			m.prototype = prototype.NewModel(m.ctx)
+		case "Adapter":
+			m.ctx.State = context.AdapterView
+			m.adapter = adapter.NewModel(m.ctx)
 		case "Decorator":
 			m.ctx.State = context.DecoratorView
 			m.decorator = decorator.NewModel(m.ctx)
@@ -153,6 +159,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "Return":
 			m.ctx.State = context.MenuView
 		}
+	case adapter.AnswerMsg:
+		switch msg {
+		case "Return":
+			m.ctx.State = context.MenuView
+		}
 	case decorator.AnswerMsg:
 		switch msg {
 		case "Return":
@@ -181,6 +192,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.builder, builderCmd = m.builder.Update(msg)
 	case context.PrototypeView:
 		m.prototype, prototypeCmd = m.prototype.Update(msg)
+	case context.AdapterView:
+		m.adapter, adapterCmd = m.adapter.Update(msg)
 	case context.DecoratorView:
 		m.decorator, decoratorCmd = m.decorator.Update(msg)
 	}
@@ -196,6 +209,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		queueCmd,
 		builderCmd,
 		prototypeCmd,
+		adapterCmd,
 		decoratorCmd,
 	)
 	return m, tea.Batch(cmds...)
@@ -225,6 +239,8 @@ func (m Model) View() string {
 		s.WriteString(m.builder.View())
 	case context.PrototypeView:
 		s.WriteString(m.prototype.View())
+	case context.AdapterView:
+		s.WriteString(m.adapter.View())
 	case context.DecoratorView:
 		s.WriteString(m.decorator.View())
 	}

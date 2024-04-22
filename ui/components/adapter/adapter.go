@@ -1,11 +1,11 @@
 package adapter
 
-type squareAdapter struct {
-	squareItem *square
+type circleAdapter struct {
+	circleItem *circle
 }
 
-func (sa *squareAdapter) circleToSquareAdapter(cir circle) square {
-	length := cir.getRadius()
-	newSquare := sa.squareItem{sideLength: length}
+func (ca *circleAdapter) circleToSquareAdapter() square {
+	newSquare := (*square).createSquare(&square{}, (ca.circleItem.radius * 2))
+
 	return newSquare
 }
