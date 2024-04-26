@@ -11,3 +11,9 @@ https://neetcode.io/problems/builder
 https://neetcode.io/problems/prototype
 https://neetcode.io/problems/adapter
 https://neetcode.io/problems/decorator
+
+Neetcode - Week 3
+https://neetcode.io/problems/facade
+https://neetcode.io/problems/strategy
+https://neetcode.io/problems/observer
+https://neetcode.io/problems/state

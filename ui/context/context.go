@@ -19,6 +19,10 @@ const (
 	PrototypeView
 	AdapterView
 	DecoratorView
+	FacadeView
+	StrategyView
+	ObserverView
+	StateView
 )
 
 type ProgramContext struct {

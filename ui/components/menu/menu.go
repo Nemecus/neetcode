@@ -66,6 +66,10 @@ func NewModel(ctx context.ProgramContext) Model {
 		item("Prototype"),
 		item("Adapter"),
 		item("Decorator"),
+		item("Facade"),
+		item("Strategy"),
+		item("Observer"),
+		item("State"),
 	}
 
 	const defaultWidth = 20

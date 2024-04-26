@@ -7,13 +7,17 @@ import (
 	"github.com/Nemecus/neetcode/ui/components/builder"
 	"github.com/Nemecus/neetcode/ui/components/decorator"
 	"github.com/Nemecus/neetcode/ui/components/dynamicarray"
+	"github.com/Nemecus/neetcode/ui/components/facade"
 	"github.com/Nemecus/neetcode/ui/components/factorymethod"
 	"github.com/Nemecus/neetcode/ui/components/insertionsort"
 	"github.com/Nemecus/neetcode/ui/components/menu"
+	"github.com/Nemecus/neetcode/ui/components/observer"
 	"github.com/Nemecus/neetcode/ui/components/prototype"
 	"github.com/Nemecus/neetcode/ui/components/queue"
 	"github.com/Nemecus/neetcode/ui/components/singleton"
 	"github.com/Nemecus/neetcode/ui/components/singlylinkedlist"
+	"github.com/Nemecus/neetcode/ui/components/state"
+	"github.com/Nemecus/neetcode/ui/components/strategy"
 	"github.com/Nemecus/neetcode/ui/context"
 	"github.com/Nemecus/neetcode/ui/keys"
 	"github.com/Nemecus/neetcode/ui/styles"
@@ -34,6 +38,10 @@ type mainContentModel struct {
 	prototype        prototype.Model
 	adapter          adapter.Model
 	decorator        decorator.Model
+	facade           facade.Model
+	strategy         strategy.Model
+	observer         observer.Model
+	state            state.Model
 }
 
 type Model struct {
@@ -74,6 +82,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		prototypeCmd        tea.Cmd
 		adapterCmd          tea.Cmd
 		decoratorCmd        tea.Cmd
+		facadeCmd           tea.Cmd
+		strategyCmd         tea.Cmd
+		observerCmd         tea.Cmd
+		stateCmd            tea.Cmd
 		cmds                []tea.Cmd
 	)
 
@@ -118,6 +130,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "Decorator":
 			m.ctx.State = context.DecoratorView
 			m.decorator = decorator.NewModel(m.ctx)
+		case "Facade":
+			m.ctx.State = context.FacadeView
+			m.facade = facade.NewModel(m.ctx)
+		case "Strategy":
+			m.ctx.State = context.StrategyView
+			m.strategy = strategy.NewModel(m.ctx)
+		case "Observer":
+			m.ctx.State = context.ObserverView
+			m.observer = observer.NewModel(m.ctx)
+		case "State":
+			m.ctx.State = context.StateView
+			m.state = state.NewModel(m.ctx)
 		}
 	case dynamicarray.AnswerMsg:
 		switch msg {
@@ -169,6 +193,26 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "Return":
 			m.ctx.State = context.MenuView
 		}
+	case facade.AnswerMsg:
+		switch msg {
+		case "Return":
+			m.ctx.State = context.MenuView
+		}
+	case strategy.AnswerMsg:
+		switch msg {
+		case "Return":
+			m.ctx.State = context.MenuView
+		}
+	case observer.AnswerMsg:
+		switch msg {
+		case "Return":
+			m.ctx.State = context.MenuView
+		}
+	case state.AnswerMsg:
+		switch msg {
+		case "Return":
+			m.ctx.State = context.MenuView
+		}
 	}
 
 	m.syncProgramContext()
@@ -196,6 +240,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.adapter, adapterCmd = m.adapter.Update(msg)
 	case context.DecoratorView:
 		m.decorator, decoratorCmd = m.decorator.Update(msg)
+	case context.FacadeView:
+		m.facade, facadeCmd = m.facade.Update(msg)
+	case context.StrategyView:
+		m.strategy, strategyCmd = m.strategy.Update(msg)
+	case context.ObserverView:
+		m.observer, observerCmd = m.observer.Update(msg)
+	case context.StateView:
+		m.state, stateCmd = m.state.Update(msg)
 	}
 	cmds = append(
 		cmds,
@@ -211,6 +263,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		prototypeCmd,
 		adapterCmd,
 		decoratorCmd,
+		facadeCmd,
+		strategyCmd,
+		observerCmd,
+		stateCmd,
 	)
 	return m, tea.Batch(cmds...)
 }
@@ -243,6 +299,14 @@ func (m Model) View() string {
 		s.WriteString(m.adapter.View())
 	case context.DecoratorView:
 		s.WriteString(m.decorator.View())
+	case context.FacadeView:
+		s.WriteString(m.facade.View())
+	case context.StrategyView:
+		s.WriteString(m.strategy.View())
+	case context.ObserverView:
+		s.WriteString(m.observer.View())
+	case context.StateView:
+		s.WriteString(m.state.View())
 	}
 
 	s.WriteString("\n")
